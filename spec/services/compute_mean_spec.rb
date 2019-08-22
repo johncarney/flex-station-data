@@ -13,16 +13,16 @@ RSpec.describe FlexStationData::ComputeMean do
     context "given non-numeric values" do
       let(:values) { %w[ A B C ] }
 
-      it "returns the first non-numeric value" do
-        expect(service.call).to eq "A"
+      it "returns nil" do
+        expect(service.call).to be_nil
       end
     end
 
     context "given mixed numeric and non-numeric values" do
       let(:values) { [ 1, "B", 2, "C", 3 ] }
 
-      it "returns the first non-numeric value" do
-        expect(service.call).to eq "B"
+      it "returns nil" do
+        expect(service.call).to be_nil
       end
     end
 

@@ -1,9 +1,12 @@
 #!/usr/bin/env ruby
 
+#!/usr/bin/env ruby
+
 require "flex_station_data/services/load_plates"
+require "flex_station_data/linear_regression"
 
 module FlexStationData
-  class SampleDataApp
+  class LinearRegressionApp
     include Concerns::Service
 
     attr_reader :args
@@ -31,11 +34,16 @@ module FlexStationData
             readings_labels = sample.readings.map(&:label)
             puts "Sample #{sample.label}"
             CSV do |out|
-              mean = sample.mean
-              out << ["time", *sample.readings.map(&:label), mean.label]
-              plate.times.zip(*sample.readings.map(&:values), mean.values).each do |row|
+              readings = [*sample.readings, sample.mean]
+              out << ["time", *readings.map(&:label)]
+              plate.times.zip(*readings.map(&:values)).each do |row|
                 out << row
               end
+
+              regression_factory = LinearRegression.method(:new).curry(2)[plate.times]
+              regressions = readings.map(&:values).map(&regression_factory)
+              out << ["slope", *regressions.map(&:slope)]
+              out << ["R²", *regressions.map(&:r_squared)]
             end
           end
         end
@@ -44,4 +52,4 @@ module FlexStationData
   end
 end
 
-FlexStationData::SampleDataApp.call(*ARGV)
+FlexStationData::LinearRegressionApp.call(*ARGV)

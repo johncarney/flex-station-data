@@ -14,9 +14,7 @@ module FlexStationData
 
     def call
       Float(values.sum) / values.size
-    rescue ArgumentError, TypeError
-      values.reject { |v| v.is_a? Numeric }.first
-    rescue NoMethodError
+    rescue ArgumentError, TypeError, NoMethodError
       nil
     end
   end
