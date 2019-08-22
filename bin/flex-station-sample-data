@@ -36,6 +36,7 @@ module FlexStationData
               plate.times.zip(*sample.readings.map(&:values), mean.values).each do |row|
                 out << row
               end
+              out << []
             end
           end
         end

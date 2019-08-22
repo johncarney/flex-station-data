@@ -44,6 +44,8 @@ module FlexStationData
               regressions = readings.map(&:values).map(&regression_factory)
               out << ["slope", *regressions.map(&:slope)]
               out << ["R²", *regressions.map(&:r_squared)]
+
+              out << []
             end
           end
         end
