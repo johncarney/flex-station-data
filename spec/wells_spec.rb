@@ -16,7 +16,7 @@ RSpec.describe FlexStationData::Wells do
     let(:wells) { described_class.new(plate_readings_matrix) }
 
     context "given a well label" do
-      let(:well_label) { "A1" }
+      let(:well_label) { "B2" }
 
       it { is_expected.to be_a FlexStationData::Readings }
 
