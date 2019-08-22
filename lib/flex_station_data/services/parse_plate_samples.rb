@@ -1,5 +1,3 @@
-require "active_support/core_ext"
-
 require "flex_station_data/readings"
 require "flex_station_data/concerns/service"
 
@@ -16,7 +14,9 @@ module FlexStationData
 
     def map_rows
       @map_rows ||= begin
-        sample_map_block.drop_while { |row| row[0] != "Sample" }.drop(1).take_while { |row| row.any?(&:present?) }.to_a
+        rows = sample_map_block.drop_while { |row| row[0] != "Sample" }.drop(1)
+        rows = rows.map { |row| row.map(&:presence) }
+        rows.take_while { |row| row.any?(&:present?) }.to_a
       end
     end
 

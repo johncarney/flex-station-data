@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+case command = ARGV.first
+when "sample-data"
+  system(Pathname(__dir__).join("flex-station-sample-data").to_path, *ARGV.drop(1))
+when "linear-regression"
+  system(Pathname(__dir__).join("flex-station-linear-regression").to_path, *ARGV.drop(1))
+when nil
+  $stderr.puts "USAGE: flex-station <command>"
+  exit(1)
+else
+  $stderr.puts "Unrecognised command: #{command}"
+  exit(1)
+end

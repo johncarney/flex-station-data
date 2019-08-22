@@ -1,7 +1,7 @@
 require "csv"
 require "active_support/core_ext"
 
-require "flex_station_data/concerns/service"
+require "flex_station_data/services/parse_plate"
 
 module FlexStationData
   class LoadPlates

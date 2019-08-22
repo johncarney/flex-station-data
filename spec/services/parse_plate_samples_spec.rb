@@ -1,4 +1,5 @@
 require "csv"
+require "active_support/core_ext"
 require "flex_station_data/services/parse_plate_samples"
 
 RSpec.describe FlexStationData::ParsePlateSamples do
@@ -7,9 +8,9 @@ RSpec.describe FlexStationData::ParsePlateSamples do
       Group: Unknowns,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
       Sample,Wells,Value,R,Result,MeanResult,SD,CV,,,,,,,,,,,,,,,,,,,,,,,,,
       1,A1,0.791,R, , , , ,,,,,,,,,,,,,,,,,,,,,,,,,
-      ,A2,0.684,R, , , , ,,,,,,,,,,,,,,,,,,,,,,,,,
+       ,A2,0.684,R, , , , ,,,,,,,,,,,,,,,,,,,,,,,,,
       2,B1,0.84,R, , , , ,,,,,,,,,,,,,,,,,,,,,,,,,
-      ,B2,0.61,R, , , , ,,,,,,,,,,,,,,,,,,,,,,,,,
+       ,B2,0.61,R, , , , ,,,,,,,,,,,,,,,,,,,,,,,,,
       ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
     CSV
   end
@@ -23,8 +24,9 @@ RSpec.describe FlexStationData::ParsePlateSamples do
   let(:service) { described_class.new(plate_samples_block, wells) }
 
   describe "#map_rows" do
-    it "returns the sample map rows from the samples block" do
-      expect(service.map_rows).to eq plate_samples_block[2...-1]
+    it "returns the sample map rows from the samples block with blank strings nil-ified" do
+      expected_rows = plate_samples_block[2...-1].map { |row| row.map(&:presence) }
+      expect(service.map_rows).to eq expected_rows
     end
   end
 

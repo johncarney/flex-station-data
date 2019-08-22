@@ -55,7 +55,7 @@ module FlexStationData
     end
 
     def call
-      [ times. temperatures. wells ]
+      [ times, temperatures, wells ]
     end
 
     class << self

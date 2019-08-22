@@ -8,9 +8,14 @@ module FlexStationData
 
     def readings(well_label)
       well_index[well_label] ||= begin
-        row, column = well_label.chars
-        Readings.new(well_label, plate_readings_matrix[row.ord - "A".ord][column.to_i - 1])
+        row, column = parse_well_label(well_label)
+        Readings.new(well_label, plate_readings_matrix[row][column])
       end
+    end
+
+    def parse_well_label(well_label)
+      row, column = well_label.scan(/\A([A-Z])(\d+)\z/).first
+      [ row.ord - "A".ord, column.to_i - 1 ]
     end
 
     private
