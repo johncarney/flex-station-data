@@ -1,5 +1,3 @@
-require "spec_helper"
-
 require "csv"
 require "flex_station_data/services/parse_plate_samples"
 

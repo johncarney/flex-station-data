@@ -1,5 +1,3 @@
-require "spec_helper"
-
 require "flex_station_data/wells"
 
 RSpec.describe FlexStationData::Wells do
