@@ -9,6 +9,10 @@ module FlexStationData
         def call(*args, &block)
           new(*args).call(&block)
         end
+
+        def to_proc
+          Proc.new(&method(:call))
+        end
       end
     end
   end

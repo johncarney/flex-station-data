@@ -31,8 +31,9 @@ module FlexStationData
             readings_labels = sample.readings.map(&:label)
             puts "Sample #{sample.label}"
             CSV do |out|
-              out << ["time", *sample.readings.map(&:label)]
-              plate.times.zip(*sample.readings.map(&:values)).each do |row|
+              mean = sample.mean
+              out << ["time", *sample.readings.map(&:label), mean.label]
+              plate.times.zip(*sample.readings.map(&:values), mean.values).each do |row|
                 out << row
               end
             end

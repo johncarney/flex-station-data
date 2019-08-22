@@ -1,3 +1,5 @@
+require "flex_station_data/services/compute_mean"
+
 module FlexStationData
   class Readings
     attr_reader :label, :values
@@ -7,8 +9,8 @@ module FlexStationData
       @values = values
     end
 
-    # def self.means(*readings, label: "means")
-    #   new(label, readings.map(&values).transpose.map { |values| values.sum / values.size.to_f })
-    # end
+    def self.mean(*readings, label: "mean")
+      new(label, readings.map(&:values).transpose.map(&ComputeMean))
+    end
   end
 end

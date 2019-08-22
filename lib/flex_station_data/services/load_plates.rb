@@ -22,7 +22,7 @@ module FlexStationData
     end
 
     def call
-      data_blocks.map(&FlexStationData::ParsePlate.method(:call))
+      data_blocks.map(&FlexStationData::ParsePlate)
     end
   end
 end
