@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require "pathname"
+
 case command = ARGV.first
 when "sample-data"
   system(Pathname(__dir__).join("flex-station-sample-data").to_path, *ARGV.drop(1))
