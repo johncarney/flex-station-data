@@ -11,11 +11,11 @@ module FlexStationData
     end
 
     def slope
-      coefficients[0]
+      coefficients[1]
     end
 
     def intercept
-      coefficients[1]
+      coefficients[0]
     end
 
     def r_squared

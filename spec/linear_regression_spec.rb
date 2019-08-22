@@ -9,7 +9,7 @@ RSpec.describe FlexStationData::LinearRegression do
   let(:slope)     { instance_double(Float, :slope) }
   let(:intercept) { instance_double(Float, :intercept) }
   let(:r_squared) { instance_double(Float, :r_squared) }
-  let(:line_fit)  { instance_double(LineFit, :line_fit, coefficients: [ slope, intercept ], rSquared: r_squared) }
+  let(:line_fit)  { instance_double(LineFit, :line_fit, coefficients: [ intercept, slope ], rSquared: r_squared) }
 
   describe "#slope" do
     it "returns the slope of the regression", :aggregate_failures do
