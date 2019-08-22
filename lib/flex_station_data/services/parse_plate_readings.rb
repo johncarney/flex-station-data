@@ -1,5 +1,6 @@
 require "active_support/core_ext"
 
+require "flex_station_data/wells"
 require "flex_station_data/concerns/service"
 
 module FlexStationData

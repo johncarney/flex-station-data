@@ -4,8 +4,6 @@ require "csv"
 require "flex_station_data/services/parse_plate_readings"
 
 RSpec.describe FlexStationData::ParsePlateReadings do
-  subject { described_class }
-
   let(:plate_readings_block_csv) do
     <<~CSV
       ,Temperature(¡C),1,2,,,,,,,,,,,,,,,,,,,
