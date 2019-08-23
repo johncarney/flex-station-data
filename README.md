@@ -1,8 +1,9 @@
 # FlexStationData
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/flex_station_data`. To experiment with that code, run `bin/console` for an interactive prompt.
+Provides tools for reading and analyzing data from teh FlexStation microplate
+reader.
 
-TODO: Delete this and the text above, and describe your gem
+Currently this is somewhere between alpha and beta.
 
 ## Installation
 
@@ -22,13 +23,35 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Viewing the sample data
 
-## Development
+To view the sample results from a set of plate readings, use the following
+command:
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+    $ flex-station-data sample-data <source file> [--threshold=<threshold>]
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+Where `source file` is the file that you got from the reader. The `threshold`
+setting is optional. If provided, samples with values that are below the
+`threshold` value will be skipped. `threshold` must be a number.
+
+The output is in CSV format. You'll probably want to save it to a file. You
+can do that by piping the output to a file:
+
+    $ flex-station-data sample-data source-data.csv --threshold=300 > sample-data.csv
+
+### Performing linear regression analysis on the sample data
+
+To perform a linear regression analysis on the sample data, use the following
+command:
+
+    $ flex-station-data liinear-regression <source file> [--threshold=<threshold>]
+
+Note that the `source file` and `threshold` options are the same as for the
+`sample-data` command above. The output is also similar, but includes the
+slope and R² values for each sample. Again, you will probably want to pipe the
+output to a file:
+
+    $ flex-station-data sample-data source-data.csv --threshold=300 > linear-regression.csv
 
 ## Contributing
 
