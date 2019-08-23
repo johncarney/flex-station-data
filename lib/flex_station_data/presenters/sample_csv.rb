@@ -7,12 +7,13 @@ module FlexStationData
     class SampleCsv
       include Concerns::Presenter
 
-      attr_reader :times, :sample, :quality_control
+      attr_reader :times, :sample, :quality_control, :options
 
-      def initialize(times, sample, quality_control: SampleQuality)
+      def initialize(times, sample, quality_control: SampleQuality, **options)
         @times = times
         @sample = sample
         @quality_control = quality_control
+        @options = options
       end
 
       def readings
@@ -32,7 +33,7 @@ module FlexStationData
       end
 
       def errors
-        @errors ||= quality_control.call(sample).reject(&:good?)
+        @errors ||= quality_control.call(sample, **options).reject(&:good?)
       end
 
       def errors?

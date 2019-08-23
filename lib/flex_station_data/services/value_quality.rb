@@ -35,7 +35,7 @@ module FlexStationData
 
     attr_reader :value, :threshold
 
-    def initialize(value, threshold: nil)
+    def initialize(value, threshold: nil, **_options)
       @value = value
       @threshold = threshold
     end

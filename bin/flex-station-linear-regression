@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
 
-#!/usr/bin/env ruby
-
 require "flex_station_data/services/load_plates"
 require "flex_station_data/presenters/plates_csv"
 require "flex_station_data/presenters/plate_csv"
-require "flex_station_data/presenters/sample_linear_regression_csv"
+require "flex_station_data/presenters/linear_regression/verbose_sample_csv"
+
+require "pry"
 
 module FlexStationData
   class LinearRegressionApp
@@ -22,22 +22,20 @@ module FlexStationData
       end
     end
 
+    def option(option_name)
+      name, value = options.reverse.detect { |name, _| name == option_name.to_s }
+      return if name.blank?
+
+      value.nil? || value
+    end
+
     def threshold
-      name, value = options.reverse.detect { |name, value| name == "threshold" }
-      return nil if name.blank?
-
-      Float(value)
+      Float(option(:threshold)) rescue nil
     end
 
-    def value_quality_control
-      @value_quality_control ||= begin
-        value_threshold = threshold
-        ->(value) { ValueQuality.call(value, threshold: value_threshold) }
-      end
-    end
-
-    def sample_quality_control
-      ->(sample) { SampleQuality.call(sample, value_quality_control: value_quality_control) }
+    def verbose?
+      true
+      # option(:verbose)
     end
 
     def files
@@ -50,14 +48,14 @@ module FlexStationData
       end
     end
 
-    def csv
+    def verbose_csv
       plates.flat_map do |file, file_plates|
-        Presenters::PlatesCsv.present(file, file_plates) do |plate|
-          Presenters::PlateCsv.present(plate) do |times, sample|
-            Presenters::SampleLinearRegressionCsv.present(times, sample, quality_control: sample_quality_control)
-          end
-        end
+        Presenters::PlatesCsv.present(file, file_plates, sample_presenter: Presenters::LinearRegression::VerboseSampleCsv, threshold: threshold)
       end
+    end
+
+    def csv
+      verbose? ? verbose_csv : [ ["summary"] ]
     end
 
     def call

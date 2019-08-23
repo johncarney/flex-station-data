@@ -25,17 +25,6 @@ module FlexStationData
       Float(value)
     end
 
-    def value_quality_control
-      @value_quality_control ||= begin
-        value_threshold = threshold
-        ->(value) { ValueQuality.call(value, threshold: value_threshold) }
-      end
-    end
-
-    def sample_quality_control
-      ->(sample) { SampleQuality.call(sample, value_quality_control: value_quality_control) }
-    end
-
     def files
       @files ||= args.map { |arg| Pathname(arg) }
     end
@@ -48,11 +37,7 @@ module FlexStationData
 
     def csv
       plates.flat_map do |file, file_plates|
-        Presenters::PlatesCsv.present(file, file_plates) do |plate|
-          Presenters::PlateCsv.present(plate) do |times, sample|
-            Presenters::SampleCsv.present(times, sample, quality_control: sample_quality_control)
-          end
-        end
+        Presenters::PlatesCsv.present(file, file_plates, threshold: threshold)
       end
     end
 
