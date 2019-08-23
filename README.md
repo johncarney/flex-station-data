@@ -1,7 +1,6 @@
 # FlexStationData
 
-Provides tools for reading and analyzing data from teh FlexStation microplate
-reader.
+Tools for reading and analyzing data from the FlexStation microplate reader.
 
 Currently this is somewhere between alpha and beta.
 
