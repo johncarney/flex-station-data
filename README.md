@@ -21,6 +21,12 @@ Or install it yourself as:
 
     $ gem install flex-station-data
 
+## Updating
+
+To update your installation, use:
+
+    $ gem update flex-station-data
+
 ## Usage
 
 ### Viewing the sample data
