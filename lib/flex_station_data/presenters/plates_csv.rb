@@ -5,15 +5,15 @@ module FlexStationData
     class PlatesCsv
       include Concerns::Presenter
 
-      attr_reader :file, :plates, :plate_presenter
+      attr_reader :file, :plates
 
-      def initialize(file, plates, plate_presenter: PlateCsv)
+      def initialize(file, plates)
         @file = file
         @plates = plates
-        @plate_presenter = plate_presenter
       end
 
-      def present
+      def present(&plate_presenter)
+        plate_presenter ||= PlateCsv
         [ ["File: #{file.to_path}"], *plates.flat_map(&plate_presenter) ]
       end
     end

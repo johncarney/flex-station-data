@@ -1,16 +1,18 @@
 require "flex_station_data/concerns/presenter"
 require "flex_station_data/readings"
+require "flex_station_data/services/sample_quality"
 
 module FlexStationData
   module Presenters
     class SampleCsv
       include Concerns::Presenter
 
-      attr_reader :times, :sample
+      attr_reader :times, :sample, :quality_control
 
-      def initialize(times, sample)
+      def initialize(times, sample, quality_control: SampleQuality)
         @times = times
         @sample = sample
+        @quality_control = quality_control
       end
 
       def readings
@@ -29,8 +31,24 @@ module FlexStationData
         "Sample #{sample.label}"
       end
 
+      def errors
+        @errors ||= quality_control.call(sample).reject(&:good?)
+      end
+
+      def errors?
+        errors.present?
+      end
+
+      def errors_csv
+        errors.map(&:to_s).map(&method(:Array))
+      end
+
+      def values_csv
+        [ headers, *rows ]
+      end
+
       def present
-        [ [label], headers, *rows ]
+        [ [label] ] + (errors? ? errors_csv : values_csv) + [ [] ]
       end
     end
   end

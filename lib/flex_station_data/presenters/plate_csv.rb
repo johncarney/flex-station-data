@@ -9,16 +9,13 @@ module FlexStationData
 
       delegate :times, :samples, to: :plate
 
-      def initialize(plate, sample_presenter: SampleCsv)
+      def initialize(plate)
         @plate = plate
-        @sample_presenter = sample_presenter
       end
 
-      def sample_presenter
-        @sample_presenter.method(:present).curry(2)[times]
-      end
-
-      def present
+      def present(&sample_presenter)
+        sample_presenter ||= SampleCsv
+        sample_presenter = sample_presenter.curry(2)[times]
         [ ["Plate #{plate.label}"], *samples.flat_map(&sample_presenter) ]
       end
     end
