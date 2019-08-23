@@ -2,7 +2,7 @@
 
 require "flex_station_data/services/load_plates"
 require "flex_station_data/presenters/plates_csv"
-require "flex_station_data/presenters/plate_csv"
+require "flex_station_data/presenters/linear_regression/plates_hash"
 require "flex_station_data/presenters/linear_regression/verbose_sample_csv"
 
 require "pry"
@@ -34,8 +34,8 @@ module FlexStationData
     end
 
     def verbose?
-      true
-      # option(:verbose)
+      # true
+      option(:verbose)
     end
 
     def files
@@ -54,8 +54,38 @@ module FlexStationData
       end
     end
 
+    def summary_hashes
+      plates.flat_map do |file, file_plates|
+        Presenters::LinearRegression::PlatesHash.present(file, file_plates, threshold: threshold)
+      end
+    end
+
+    def clean_values(values)
+      values.each_with_object([]) do |value, memo|
+        memo << ((value != memo.compact.last) ? value : nil)
+      end
+    end
+
+    def summary_hash
+      @summary_hash ||= begin
+        result = summary_hashes.each_with_object({}) do |hash, memo|
+          hash.each do |header, value|
+            memo[header] ||= []
+            memo[header] << value
+          end
+        end
+        result["file"] = clean_values(result["file"])
+        result["plate"] = clean_values(result["plate"])
+        result
+      end
+    end
+
+    def summary_csv
+      [ summary_hash.keys, *summary_hash.values.transpose ]
+    end
+
     def csv
-      verbose? ? verbose_csv : [ ["summary"] ]
+      verbose? ? verbose_csv : summary_csv
     end
 
     def call

@@ -30,6 +30,10 @@ module FlexStationData
             memo[label] = sample_regressions.map(&method)
           end
         end
+
+        def self.headers
+          PRODUCTS.values
+        end
       end
     end
   end
