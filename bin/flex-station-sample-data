@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 
 require "flex_station_data/services/load_plates"
+require "flex_station_data/presenters/plates_csv"
+
+require "pry"
 
 module FlexStationData
   class SampleDataApp
@@ -22,23 +25,16 @@ module FlexStationData
       end
     end
 
+    def csv
+      plates.flat_map do |file, file_plates|
+        Presenters::PlatesCsv.present(file, file_plates)
+      end
+    end
+
     def call
-      plates.each do |file, file_plates|
-        puts "File: #{file.to_path}"
-        file_plates.each_with_index.map do |plate, plate_index|
-          puts "Plate: #{plate_index + 1}"
-          plate.samples.each do |sample|
-            readings_labels = sample.readings.map(&:label)
-            puts "Sample #{sample.label}"
-            CSV do |out|
-              mean = sample.mean
-              out << ["time", *sample.readings.map(&:label), mean.label]
-              plate.times.zip(*sample.readings.map(&:values), mean.values).each do |row|
-                out << row
-              end
-              out << []
-            end
-          end
+      CSV do |out|
+        csv.each do |row|
+          out << row
         end
       end
     end

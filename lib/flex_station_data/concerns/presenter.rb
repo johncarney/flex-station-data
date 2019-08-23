@@ -2,20 +2,20 @@ require "active_support/concern"
 
 module FlexStationData
   module Concerns
-    module Service
+    module Presenter
       extend ActiveSupport::Concern
 
       def to_proc
-        Proc.new(&method(:call))
+        Proc.new(&method(:present))
       end
 
       class_methods do
-        def call(*args, &block)
-          new(*args).call(&block)
+        def present(*args, &block)
+          new(*args).present(&block)
         end
 
         def to_proc
-          Proc.new(&method(:call))
+          Proc.new(&method(:present))
         end
       end
     end

@@ -8,9 +8,10 @@ module FlexStationData
   class ParsePlate
     include Concerns::Service
 
-    attr_reader :plate_data
+    attr_reader :label, :plate_data
 
-    def initialize(plate_data)
+    def initialize(label, plate_data)
+      @label = label
       @plate_data = plate_data
     end
 
@@ -21,7 +22,7 @@ module FlexStationData
     def call
       times, temperatures, wells = ParsePlateReadings.call(data_blocks[0])
       samples = ParsePlateSamples.call(data_blocks[1], wells)
-      Plate.new(times, temperatures, samples)
+      Plate.new(label, times, temperatures, samples)
     end
   end
 end
