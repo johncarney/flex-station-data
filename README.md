@@ -49,14 +49,14 @@ can do that by piping the output to a file:
 To perform a linear regression analysis on the sample data, use the following
 command:
 
-    $ flex-station liinear-regression <source file> [--threshold=<threshold>]
+    $ flex-station linear-regression <source file> [--threshold=<threshold>]
 
 Note that the `source file` and `threshold` options are the same as for the
 `sample-data` command above. The output is also similar, but includes the
 slope and R² values for each sample. Again, you will probably want to pipe the
 output to a file:
 
-    $ flex-station sample-data source-data.csv --threshold=300 > linear-regression.csv
+    $ flex-station linear-regression source-data.csv --threshold=300 > linear-regression.csv
 
 ## Contributing
 
