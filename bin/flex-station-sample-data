@@ -1,15 +1,39 @@
 #!/usr/bin/env ruby
 
 require "flex_station_data/services/load_plates"
+require "flex_station_data/presenters/plates_csv"
 
 module FlexStationData
   class SampleDataApp
     include Concerns::Service
 
-    attr_reader :args
+    OPTION_RE = /\A--(\w+(?:-\w+)*)(?:=(.*))?\z/.freeze
+
+    attr_reader :args, :options
 
     def initialize(*args)
-      @args = args
+      @options, @args = args.partition { |arg| arg =~ OPTION_RE }
+      @options.map! do |option|
+        option.scan(OPTION_RE).first
+      end
+    end
+
+    def threshold
+      name, value = options.reverse.detect { |name, value| name == "threshold" }
+      return nil if name.blank?
+
+      Float(value)
+    end
+
+    def value_quality_control
+      @value_quality_control ||= begin
+        value_threshold = threshold
+        ->(value) { ValueQuality.call(value, threshold: value_threshold) }
+      end
+    end
+
+    def sample_quality_control
+      ->(sample) { SampleQuality.call(sample, value_quality_control: value_quality_control) }
     end
 
     def files
@@ -22,23 +46,20 @@ module FlexStationData
       end
     end
 
-    def call
-      plates.each do |file, file_plates|
-        puts "File: #{file.to_path}"
-        file_plates.each_with_index.map do |plate, plate_index|
-          puts "Plate: #{plate_index + 1}"
-          plate.samples.each do |sample|
-            readings_labels = sample.readings.map(&:label)
-            puts "Sample #{sample.label}"
-            CSV do |out|
-              mean = sample.mean
-              out << ["time", *sample.readings.map(&:label), mean.label]
-              plate.times.zip(*sample.readings.map(&:values), mean.values).each do |row|
-                out << row
-              end
-              out << []
-            end
+    def csv
+      plates.flat_map do |file, file_plates|
+        Presenters::PlatesCsv.present(file, file_plates) do |plate|
+          Presenters::PlateCsv.present(plate) do |times, sample|
+            Presenters::SampleCsv.present(times, sample, quality_control: sample_quality_control)
           end
+        end
+      end
+    end
+
+    def call
+      CSV do |out|
+        csv.each do |row|
+          out << row
         end
       end
     end

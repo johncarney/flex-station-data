@@ -22,7 +22,9 @@ module FlexStationData
     end
 
     def call
-      data_blocks.map(&FlexStationData::ParsePlate)
+      data_blocks.each_with_index.map do |data_block, index|
+        FlexStationData::ParsePlate.call(index + 1, data_block)
+      end
     end
   end
 end

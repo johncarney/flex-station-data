@@ -47,8 +47,8 @@ RSpec.describe FlexStationData::LoadPlates do
       plate_1 = instance_double(FlexStationData::Plate, :plate_1)
       plate_2 = instance_double(FlexStationData::Plate, :plate_2)
 
-      expect(FlexStationData::ParsePlate).to receive(:call).with(block_1).and_return plate_1
-      expect(FlexStationData::ParsePlate).to receive(:call).with(block_2).and_return plate_2
+      expect(FlexStationData::ParsePlate).to receive(:call).with(anything, block_1).and_return plate_1
+      expect(FlexStationData::ParsePlate).to receive(:call).with(anything, block_2).and_return plate_2
 
       expect(service.call).to eq [ plate_1, plate_2 ]
     end

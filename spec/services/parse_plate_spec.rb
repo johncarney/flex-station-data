@@ -1,7 +1,11 @@
+require "support/plate_matcher"
 require "flex_station_data/services/parse_plate"
 
 RSpec.describe FlexStationData::ParsePlate do
-  let(:service) { described_class.new(plate_data) }
+  include PlateMatcher
+
+  let(:label)   { "the plate" }
+  let(:service) { described_class.new(label, plate_data) }
 
   describe "#data_blocks" do
     let(:plate_data) do
@@ -55,10 +59,7 @@ RSpec.describe FlexStationData::ParsePlate do
       samples = double(:samples)
       expect(FlexStationData::ParsePlateSamples).to receive(:call).with(block_2, wells).and_return samples
 
-      plate = instance_double(FlexStationData::Plate, :plate)
-      expect(FlexStationData::Plate).to receive(:new).with(times, temperatures, samples).and_return plate
-
-      expect(service.call).to be plate
+      expect(service.call).to be_a_plate.with(label, times, temperatures, samples)
     end
   end
 end

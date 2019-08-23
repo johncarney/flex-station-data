@@ -3,16 +3,41 @@
 #!/usr/bin/env ruby
 
 require "flex_station_data/services/load_plates"
-require "flex_station_data/linear_regression"
+require "flex_station_data/presenters/plates_csv"
+require "flex_station_data/presenters/plate_csv"
+require "flex_station_data/presenters/sample_linear_regression_csv"
 
 module FlexStationData
   class LinearRegressionApp
     include Concerns::Service
 
-    attr_reader :args
+    OPTION_RE = /\A--(\w+(?:-\w+)*)(?:=(.*))?\z/.freeze
+
+    attr_reader :args, :options
 
     def initialize(*args)
-      @args = args
+      @options, @args = args.partition { |arg| arg =~ OPTION_RE }
+      @options.map! do |option|
+        option.scan(OPTION_RE).first
+      end
+    end
+
+    def threshold
+      name, value = options.reverse.detect { |name, value| name == "threshold" }
+      return nil if name.blank?
+
+      Float(value)
+    end
+
+    def value_quality_control
+      @value_quality_control ||= begin
+        value_threshold = threshold
+        ->(value) { ValueQuality.call(value, threshold: value_threshold) }
+      end
+    end
+
+    def sample_quality_control
+      ->(sample) { SampleQuality.call(sample, value_quality_control: value_quality_control) }
     end
 
     def files
@@ -25,29 +50,20 @@ module FlexStationData
       end
     end
 
-    def call
-      plates.each do |file, file_plates|
-        puts "File: #{file.to_path}"
-        file_plates.each_with_index.map do |plate, plate_index|
-          puts "Plate: #{plate_index + 1}"
-          plate.samples.each do |sample|
-            readings_labels = sample.readings.map(&:label)
-            puts "Sample #{sample.label}"
-            CSV do |out|
-              readings = [*sample.readings, sample.mean]
-              out << ["time", *readings.map(&:label)]
-              plate.times.zip(*readings.map(&:values)).each do |row|
-                out << row
-              end
-
-              regression_factory = LinearRegression.method(:new).curry(2)[plate.times]
-              regressions = readings.map(&:values).map(&regression_factory)
-              out << ["slope", *regressions.map(&:slope)]
-              out << ["R²", *regressions.map(&:r_squared)]
-
-              out << []
-            end
+    def csv
+      plates.flat_map do |file, file_plates|
+        Presenters::PlatesCsv.present(file, file_plates) do |plate|
+          Presenters::PlateCsv.present(plate) do |times, sample|
+            Presenters::SampleLinearRegressionCsv.present(times, sample, quality_control: sample_quality_control)
           end
+        end
+      end
+    end
+
+    def call
+      CSV do |out|
+        csv.each do |row|
+          out << row
         end
       end
     end
