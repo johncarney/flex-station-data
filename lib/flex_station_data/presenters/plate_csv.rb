@@ -5,18 +5,24 @@ module FlexStationData
     class PlateCsv
       include Concerns::Presenter
 
-      attr_reader :plate
+      attr_reader :plate, :sample_presenter, :options
 
       delegate :times, :samples, to: :plate
 
-      def initialize(plate)
+      def initialize(plate, sample_presenter: SampleCsv, **options)
         @plate = plate
+        @sample_presenter = sample_presenter
+        @options = options
       end
 
-      def present(&sample_presenter)
-        sample_presenter ||= SampleCsv
-        sample_presenter = sample_presenter.curry(2)[times]
-        [ ["Plate #{plate.label}"], *samples.flat_map(&sample_presenter) ]
+      def samples_csv
+        samples.flat_map do |sample|
+          sample_presenter.present(times, sample, **options)
+        end
+      end
+
+      def present
+        [ ["Plate #{plate.label}"], *samples_csv ]
       end
     end
   end

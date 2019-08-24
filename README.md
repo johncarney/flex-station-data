@@ -35,9 +35,10 @@ command:
 
     $ flex-station sample-data <source file> [--threshold=<threshold>]
 
-Where `source file` is the file that you got from the reader. The `threshold`
-setting is optional. If provided, samples with values that are below the
-`threshold` value will be skipped. `threshold` must be a number.
+Where `source file` is the file that you got from the reader. You can specify
+multiple source files. The `threshold` setting is optional. If provided,
+samples with values that are below the `threshold` value will be skipped.
+`threshold` must be a number.
 
 The output is in CSV format. You'll probably want to save it to a file. You
 can do that by piping the output to a file:
@@ -49,12 +50,18 @@ can do that by piping the output to a file:
 To perform a linear regression analysis on the sample data, use the following
 command:
 
-    $ flex-station linear-regression <source file> [--threshold=<threshold>]
+    $ flex-station-data liinear-regression <source file> [--threshold=<threshold>] [--verbose] [--min-r-squared=<mininmum R²>]
 
 Note that the `source file` and `threshold` options are the same as for the
-`sample-data` command above. The output is also similar, but includes the
-slope and R² values for each sample. Again, you will probably want to pipe the
-output to a file:
+`sample-data` command above. If a `--min-r-squared` value is given, samples
+with a R² value that falls below the threshold will be flagged as "poor fits."
+If no `--min-r-squared` is specified, a default of 0.75 will be used.
+
+By default the linear regression tool will produce a summary report giving the
+slope, intercept, and R² values for each sample. However if `--verbose` is
+specified, it will also include the sample data and regressions for each well.
+
+As with the sample data tool, you will probably want to pipe the output to a file:
 
     $ flex-station linear-regression source-data.csv --threshold=300 > linear-regression.csv
 
