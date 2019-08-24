@@ -9,19 +9,22 @@ module FlexStationData
         PRODUCTS = {
           slope:     "slope",
           intercept: "intercept",
-          r_squared: "R²"
+          r_squared: "R²",
+          quality:   "quality"
         }.freeze
 
-        attr_reader :times, :sample_values
+        attr_reader :times, :sample_values, :min_r_squared, :options
 
-        def initialize(times, *sample_values)
+        def initialize(times, *sample_values, min_r_squared: nil, **options)
           @times = times
           @sample_values = sample_values
+          @min_r_squared = min_r_squared
+          @options = options
         end
 
         def sample_regressions
           @sample_regressions ||= sample_values.map do |values|
-            FlexStationData::LinearRegression.new(times, values)
+            FlexStationData::LinearRegression.new(times, values, min_r_squared: min_r_squared)
           end
         end
 

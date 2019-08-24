@@ -8,7 +8,7 @@ module FlexStationData
         include Concerns::Presenter
 
         def regression_factory
-          FlexStationData::LinearRegression.method(:new).curry(2)[times]
+          ->(y) { FlexStationData::LinearRegression.new(times, y, **options) }
         end
 
         def regressions

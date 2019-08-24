@@ -28,14 +28,18 @@ module FlexStationData
           { "error" => errors.first&.to_s }
         end
 
+        def wells_hash
+          { "wells" => sample.readings.map(&:label).join(", ") }
+        end
+
         def regression_hash
           return SampleRegressionHash.headers.zip([]).to_h if errors?
 
-          SampleRegressionHash.present(times, sample.mean.values).transform_values(&:first)
+          SampleRegressionHash.present(times, sample.mean.values, **options).transform_values(&:first)
         end
 
         def present
-          { "sample" => sample.label }.merge(errors_hash).merge(regression_hash)
+          { "sample" => sample.label }.merge(wells_hash).merge(errors_hash).merge(regression_hash)
         end
       end
     end
