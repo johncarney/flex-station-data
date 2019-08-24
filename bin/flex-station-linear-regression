@@ -38,7 +38,7 @@ module FlexStationData
     end
 
     def min_r_squared
-      Float(option("min-r-squared")) rescue 0.0
+      Float(option("min-r-squared")) rescue 0.75
     end
 
     def files
@@ -53,13 +53,24 @@ module FlexStationData
 
     def verbose_csv
       plates.flat_map do |file, file_plates|
-        Presenters::PlatesCsv.present(file, file_plates, sample_presenter: Presenters::LinearRegression::VerboseSampleCsv, threshold: threshold)
+        Presenters::PlatesCsv.present(
+          file,
+          file_plates,
+          sample_presenter: Presenters::LinearRegression::VerboseSampleCsv,
+          threshold:        threshold,
+          min_r_squared:    min_r_squared
+        )
       end
     end
 
     def summary_hashes
       plates.flat_map do |file, file_plates|
-        Presenters::LinearRegression::PlatesHash.present(file, file_plates, threshold: threshold, min_r_squared: min_r_squared)
+        Presenters::LinearRegression::PlatesHash.present(
+          file,
+          file_plates,
+          threshold:     threshold,
+          min_r_squared: min_r_squared
+        )
       end
     end
 

@@ -7,20 +7,12 @@ module FlexStationData
       class VerboseSampleCsv < Presenters::SampleCsv
         include Concerns::Presenter
 
-        def regression_factory
-          ->(y) { FlexStationData::LinearRegression.new(times, y, **options) }
-        end
-
-        def regressions
-          [ *sample.readings, sample.mean ].map(&:values).map(&regression_factory)
-        end
-
         def sample_values
           [ *sample.readings, sample.mean ].map(&:values)
         end
 
         def regressions_hash
-          SampleRegressionHash.present(times, *sample_values)
+          SampleRegressionHash.present(times, *sample_values, **options)
         end
 
         def regressions_csv
