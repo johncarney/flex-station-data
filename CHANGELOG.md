@@ -1,7 +1,7 @@
 # 0.3.0
 
 * The linear regression analysis report now produces a summary report of the
-  regression for each sample. The sample data can by added by sSpecifying the
+  regression for each sample. The sample data can by added by specifying the
   `--verbose` option.
 
 # 0.2.0
