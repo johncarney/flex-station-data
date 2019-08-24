@@ -1,4 +1,5 @@
 require "active_support/core_ext"
+require "matrix"
 
 require "flex_station_data/wells"
 require "flex_station_data/concerns/service"
@@ -13,45 +14,34 @@ module FlexStationData
       @plate_readings_block = plate_readings_block
     end
 
-    def column_count
-      @column_count ||= headers.reverse.drop_while(&:blank?).size
+    def headers
+      @headers ||= plate_readings_block.first.reverse.drop_while(&:blank?).reverse
     end
 
-    def parsed_rows
-      @parsed_rows ||= begin
-        rows = plate_readings_data.map { |row| parse_row(row[0...column_count]) }
-        rows.select { |row| row.any?(&:present?) }
-      end
-    end
-
-    def parsed_columns
-      @parsed_columns ||= parsed_rows.transpose
+    def matrix
+      @matrix ||= Matrix[
+        *plate_readings_block.drop(1).map { |row| parse_row(row[0...headers.size]) }.select { |row| row.any?(&:present?) }
+      ]
     end
 
     def times
-      @times ||= parsed_columns[0].compact
+      @times ||= matrix.column(0).to_a.compact
     end
 
     def temperatures
-      @temperatures ||= parsed_columns[1].compact
+      @temperatures ||= matrix.column(1).to_a.compact
     end
 
-    def values
-      @values ||= parsed_columns.drop(2)
-    end
-
-    def wells_row_count
-      parsed_rows.size / times.size
-    end
-
-    def plate_readings_matrix
-      values.map do |values_column|
-        values_column.each_slice(wells_row_count).to_a.transpose
+    def wells_matrix
+      well_row_count = matrix.row_count / times.size
+      rows = well_values.column_vectors.map do |column|
+        column.to_a.each_slice(well_row_count).to_a.transpose
       end.transpose
+      Matrix[*rows]
     end
 
     def wells
-      Wells.new(plate_readings_matrix)
+      Wells.new(wells_matrix)
     end
 
     def call
@@ -78,12 +68,8 @@ module FlexStationData
 
     private
 
-    def headers
-      plate_readings_block.first
-    end
-
-    def plate_readings_data
-      @plate_readings_data ||= plate_readings_block.drop(1)
+    def well_values
+      matrix.minor(0..-1, 2..-1)
     end
 
     attr_reader :plate_readings_block
