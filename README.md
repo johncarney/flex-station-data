@@ -50,7 +50,7 @@ can do that by piping the output to a file:
 To perform a linear regression analysis on the sample data, use the following
 command:
 
-    $ flex-station-data liinear-regression <source file> [--threshold=<threshold>] [--verbose] [--min-r-squared=<mininmum R²>]
+    $ flex-station-data linear-regression <source file> [--threshold=<threshold>] [--verbose] [--min-r-squared=<mininmum R²>]
 
 Note that the `source file` and `threshold` options are the same as for the
 `sample-data` command above. If a `--min-r-squared` value is given, samples
