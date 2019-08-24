@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    flex-station-data (0.2.0)
+    flex-station-data (0.3.0)
       activesupport
       linefit
 
