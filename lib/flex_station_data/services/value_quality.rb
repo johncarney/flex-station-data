@@ -1,6 +1,8 @@
 require "singleton"
 require "active_support/core_ext"
 
+require "flex_station_data/concerns/service"
+
 module FlexStationData
   class ValueQuality
     include Concerns::Service
