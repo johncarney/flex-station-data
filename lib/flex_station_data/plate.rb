@@ -14,7 +14,7 @@ module FlexStationData
 
     def samples
       @samples ||= sample_map.map do |label, well_labels|
-        Sample.new(label, well_labels.map(&wells.method(:readings)))
+        Sample.new(label, well_labels, self)
       end
     end
   end

@@ -1,11 +1,12 @@
 require "csv"
 
-require "support/plate_matcher"
 require "flex_station_data/services/parse_plate"
 require "flex_station_data/sample"
 
+require "support/wells_matchers"
+
 RSpec.describe FlexStationData::ParsePlate do
-  include PlateMatcher
+  include WellsMatchers
 
   let(:label)   { "the plate" }
   let(:service) { described_class.new(label, plate_data) }
@@ -69,11 +70,19 @@ RSpec.describe FlexStationData::ParsePlate do
     it "builds a Plate object from the plate data", :aggregate_failures do
       times = [ 0.0, 2.0 ]
       temperatures = [ 23.4, 23.5 ]
-      samples = [
-        FlexStationData::Sample.new("1", [ FlexStationData::Readings.new("A1", [2254.922, 2343.580]), FlexStationData::Readings.new("A2", [1842.306, 1903.978]) ]),
-        FlexStationData::Sample.new("2", [ FlexStationData::Readings.new("B1", [2195.008, 2248.472]), FlexStationData::Readings.new("B2", [1803.211, 1858.705]) ])
+      plate_wells = FlexStationData::Wells.new Matrix[
+        [ [2254.922, 2343.580], [1842.306, 1903.978] ],
+        [ [2195.008, 2248.472], [1803.211, 1858.705] ]
       ]
-      expect(service.call).to be_a_plate.with(label, times, temperatures, samples)
+      sample_map = { "1" => %w[A1 A2], "2" => %w[B1 B2] }
+
+      expected_plate = instance_double(FlexStationData::Plate, :plate)
+      expect(FlexStationData::Plate).to receive(:new).with(label, times, temperatures, wells_matching(plate_wells), sample_map).and_wrap_original do |method, *args|
+        method.call(*args)
+        expected_plate
+      end
+
+      expect(service.call).to be expected_plate
     end
   end
 end

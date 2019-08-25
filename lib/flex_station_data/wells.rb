@@ -4,12 +4,14 @@ require "flex_station_data/readings"
 
 module FlexStationData
   class Wells
-    def initialize(plate_readings_matrix)
-      @plate_readings_matrix = plate_readings_matrix
+    attr_reader :matrix
+
+    def initialize(matrix)
+      @matrix = matrix
     end
 
     def values(well_label)
-      plate_readings_matrix[*coordinates(well_label)]
+      matrix[*coordinates(well_label)]
     end
 
     def readings(well_label)
@@ -32,7 +34,5 @@ module FlexStationData
     def coordinates_index
       @coordinates_index ||= {}
     end
-
-    attr_reader :plate_readings_matrix
   end
 end
