@@ -34,10 +34,7 @@ module FlexStationData
 
     def wells_matrix
       well_row_count = matrix.row_count / times.size
-      rows = well_values.column_vectors.map do |column|
-        column.to_a.each_slice(well_row_count).to_a.transpose
-      end.transpose
-      Matrix[*rows]
+      Matrix[*well_values.column_vectors.map { |col| col.to_a.each_slice(well_row_count).to_a.transpose }.transpose ]
     end
 
     def wells

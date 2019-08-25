@@ -13,6 +13,7 @@ RSpec.describe FlexStationData::ParsePlateReadings do
       ,,,,,,,,,,,,,,,,,,,,,,,,,
     CSV
   end
+
   let(:plate_readings_block) do
     CSV.parse(plate_readings_block_csv, headers: false)
   end
