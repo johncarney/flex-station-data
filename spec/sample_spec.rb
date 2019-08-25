@@ -2,11 +2,7 @@ require "flex_station_data/wells"
 require "flex_station_data/plate"
 require "flex_station_data/sample"
 
-require "support/readings_matchers"
-
 RSpec.describe FlexStationData::Sample do
-  include ReadingsMatchers
-
   let(:sample) { described_class.new(label, wells, plate) }
 
   let(:label) { "a sample" }
@@ -30,28 +26,15 @@ RSpec.describe FlexStationData::Sample do
     end
   end
 
-  describe "#readings" do
-    subject(:readings) { sample.readings }
-
-    it "returns readings for each sample well" do
-      expected_readings = [ ["B3",  %i[g]], ["B4", %i[h]] ].map do |label, values|
-        FlexStationData::Readings.new(label, values)
-      end
-
-      expect(readings).to match expected_readings.map(&method(:match_readings))
-    end
-  end
-
   describe ".mean" do
-    it "returns readings that are the mean of the sample readings", :aggregate_failures do
-      readings_1 = instance_double(FlexStationData::Readings, :readings_1)
-      readings_2 = instance_double(FlexStationData::Readings, :readings_1)
-      readings_mean = instance_double(FlexStationData::Readings, :readings_mean)
-      expect(FlexStationData::Readings).to receive(:mean).with(readings_1, readings_2).and_return readings_mean
+    it "returns values that are the mean of the sample values", :aggregate_failures do
+      values_1 = [ 1, 2, 3 ]
+      values_2 = [ 4, 5, 6 ]
+      mean     = values_1.zip(values_2).map(&FlexStationData::ComputeMean)
 
-      allow(sample).to receive(:readings).and_return [ readings_1, readings_2 ]
+      allow(sample).to receive(:values).and_return [ values_1, values_2 ]
 
-      expect(sample.mean).to be readings_mean
+      expect(sample.mean).to eq mean
     end
   end
 end

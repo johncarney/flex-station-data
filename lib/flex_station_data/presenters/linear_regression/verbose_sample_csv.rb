@@ -8,7 +8,7 @@ module FlexStationData
         include Concerns::Presenter
 
         def sample_values
-          [ *sample.readings, sample.mean ].map(&:values)
+          [ *sample.values, sample.mean ]
         end
 
         def regressions_hash

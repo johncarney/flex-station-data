@@ -17,7 +17,7 @@ module FlexStationData
     end
 
     def call
-      sample.readings.flat_map(&:values).map(&method(:value_quality)).uniq(&:to_s)
+      sample.values.flatten.map(&method(:value_quality)).uniq(&:to_s)
     end
   end
 end

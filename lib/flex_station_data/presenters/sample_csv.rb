@@ -1,5 +1,4 @@
 require "flex_station_data/concerns/presenter"
-require "flex_station_data/readings"
 require "flex_station_data/services/sample_quality"
 
 module FlexStationData
@@ -16,16 +15,16 @@ module FlexStationData
         @options = options
       end
 
-      def readings
-        @readings ||= [ Readings.new("time", times), *sample.readings, sample.mean ]
+      def values
+        @values ||= [ times, *sample.values, sample.mean ]
       end
 
       def headers
-        readings.map(&:label)
+        @headers ||= [ "time", *sample.wells, "mean" ]
       end
 
       def rows
-        readings.map(&:values).transpose
+        values.transpose
       end
 
       def label

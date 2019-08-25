@@ -29,13 +29,13 @@ module FlexStationData
         end
 
         def wells_hash
-          { "wells" => sample.readings.map(&:label).join(", ") }
+          { "wells" => sample.wells.join(", ") }
         end
 
         def regression_hash
           return SampleRegressionHash.headers.zip([]).to_h if errors?
 
-          SampleRegressionHash.present(times, sample.mean.values, **options).transform_values(&:first)
+          SampleRegressionHash.present(times, sample.mean, **options).transform_values(&:first)
         end
 
         def present

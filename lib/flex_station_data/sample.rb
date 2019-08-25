@@ -1,6 +1,6 @@
 require "matrix"
 
-require "flex_station_data/readings"
+require "flex_station_data/services/compute_mean"
 
 module FlexStationData
   class Sample
@@ -23,7 +23,7 @@ module FlexStationData
     end
 
     def mean
-      @mean ||= Readings.mean(*readings)
+      @mean ||= values.transpose.map(&ComputeMean)
     end
   end
 end
