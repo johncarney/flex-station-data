@@ -14,8 +14,8 @@ RSpec.describe FlexStationData::Presenters::PlateCsv do
   describe "#present" do
     subject(:csv) { presenter.present }
 
-    let(:sample_1) { instance_double(FlexStationData::Sample, :sample_1, label: "A") }
-    let(:sample_2) { instance_double(FlexStationData::Sample, :sample_2, label: "B") }
+    let(:sample_1) { instance_double(FlexStationData::Sample, :sample_1) }
+    let(:sample_2) { instance_double(FlexStationData::Sample, :sample_2) }
     let(:samples)  { [ sample_1, sample_2 ] }
 
     it "returns rows with data from the plate's samples" do

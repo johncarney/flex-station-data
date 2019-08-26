@@ -14,14 +14,19 @@ module FlexStationData
         @options = options
       end
 
+      def present
+        [
+          [ "File: #{file.basename.to_path}" ],
+          *plates_csv
+        ]
+      end
+
+      private
+
       def plates_csv
         plates.flat_map do |plate|
           plate_presenter.present(plate, **options)
         end
-      end
-
-      def present
-        [ ["File: #{file.to_path}"], *plates_csv ]
       end
     end
   end
