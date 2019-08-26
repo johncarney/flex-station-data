@@ -2,8 +2,6 @@ require "flex_station_data/presenters/sample_csv"
 
 require "flex_station_data/sample"
 
-require "pry"
-
 RSpec.describe FlexStationData::Presenters::SampleCsv do
   let(:presenter) { described_class.new(times, sample, quality_control: quality_control, **options) }
 

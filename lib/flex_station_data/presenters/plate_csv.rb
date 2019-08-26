@@ -15,14 +15,19 @@ module FlexStationData
         @options = options
       end
 
+      def present
+        [
+          [ "Plate #{plate.label}" ],
+          *samples_csv
+        ]
+      end
+
+      private
+
       def samples_csv
         samples.flat_map do |sample|
           sample_presenter.present(times, sample, **options)
         end
-      end
-
-      def present
-        [ ["Plate #{plate.label}"], *samples_csv ]
       end
     end
   end
