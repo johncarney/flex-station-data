@@ -5,8 +5,6 @@ require "flex_station_data/presenters/plates_csv"
 require "flex_station_data/presenters/linear_regression/plates_hash"
 require "flex_station_data/presenters/linear_regression/verbose_sample_csv"
 
-require "pry"
-
 module FlexStationData
   class LinearRegressionApp
     include Concerns::Service
