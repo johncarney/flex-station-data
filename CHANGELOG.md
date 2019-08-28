@@ -1,3 +1,11 @@
+# 0.3.2
+
+* Internal refactoring
+
+# 0.3.1
+
+* Fixed bug
+
 # 0.3.0
 
 * The linear regression analysis report now produces a summary report of the
