@@ -1,5 +1,4 @@
 require "flex_station_data/concerns/presenter"
-require "flex_station_data/readings"
 require "flex_station_data/services/sample_quality"
 
 module FlexStationData
@@ -16,24 +15,22 @@ module FlexStationData
         @options = options
       end
 
-      def readings
-        @readings ||= [ Readings.new("time", times), *sample.readings, sample.mean ]
+      def errors
+        @errors ||= quality_control.call(sample, **options).reject(&:good?)
       end
 
-      def headers
-        readings.map(&:label)
+      def present
+        [
+          [ label ],
+          *body_csv,
+          [ ]
+        ]
       end
 
-      def rows
-        readings.map(&:values).transpose
-      end
+      private
 
       def label
         "Sample #{sample.label}"
-      end
-
-      def errors
-        @errors ||= quality_control.call(sample, **options).reject(&:good?)
       end
 
       def errors?
@@ -44,12 +41,20 @@ module FlexStationData
         errors.map(&:to_s).map(&method(:Array))
       end
 
-      def values_csv
-        [ headers, *rows ]
+      def headers
+        [ "time", *sample.wells, "mean" ]
       end
 
-      def present
-        [ [label] ] + (errors? ? errors_csv : values_csv) + [ [] ]
+      def values
+        [ times, *sample.values, sample.mean ]
+      end
+
+      def values_csv
+        [ headers, *values.transpose ]
+      end
+
+      def body_csv
+        errors? ? errors_csv : values_csv
       end
     end
   end

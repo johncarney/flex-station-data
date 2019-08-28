@@ -13,71 +13,48 @@ RSpec.describe FlexStationData::ParsePlateReadings do
       ,,,,,,,,,,,,,,,,,,,,,,,,,
     CSV
   end
+
   let(:plate_readings_block) do
     CSV.parse(plate_readings_block_csv, headers: false)
   end
 
   let(:service) { described_class.new(plate_readings_block) }
 
-  describe "#column_count" do
-    it "returns the number of value columns" do
-      expect(service.column_count).to eq 4
+  describe "#headers" do
+    it "returns the header row of the data block with trailing blanks stripped" do
+      expect(service.headers).to eq plate_readings_block.first[0..3]
     end
   end
 
-  describe "#parsed_rows" do
-    it "parses the rows" do
-      expected_rows = [
+  describe "#matrix" do
+    it "returns the parsed value rows of the data block as a matrix" do
+      expect(service.matrix).to eq Matrix[
         [ 0.0, 23.4, 2254.922, 1842.306 ],
         [ nil, nil,  2195.008, 1803.211 ],
         [ 2.0, 23.5, 2343.580, 1903.978 ],
         [ nil, nil,  2248.472, 1858.705 ]
       ]
-      expect(service.parsed_rows).to eq expected_rows
-    end
-  end
-
-  describe "#parsed_columns" do
-    it "transposes the parsed rows", :aggregate_failures do
-      expect(service).to receive(:parsed_rows).and_return [ [1, 2], [3, 4] ]
-      expect(service.parsed_columns).to eq [ [1, 3], [2, 4] ]
     end
   end
 
   describe "#times" do
-    it "returns the time values from the plate readings", :aggregate_failures do
-      expect(service).to receive(:parsed_columns).and_return [ [1, nil, 2], [3, nil, 4], [5, 6, 7] ]
-      expect(service.times).to eq [ 1, 2 ]
+    it "returns the time values from the plate readings" do
+      expect(service.times).to eq [ 0.0, 2.0 ]
     end
   end
 
   describe "#temperatures" do
-    it "returns the temperature values from the plate readings", :aggregate_failures do
-      expect(service).to receive(:parsed_columns).and_return [ [1, nil, 2], [3, nil, 4], [5, 6, 7] ]
-      expect(service.temperatures).to eq [ 3, 4 ]
+    it "returns the temperature values from the plate readings" do
+      expect(service.temperatures).to eq [ 23.4, 23.5 ]
     end
   end
 
-  describe "#values" do
-    it "returns the values from the plate readings", :aggregate_failures do
-      expect(service).to receive(:parsed_columns).and_return [ [1, nil, 2], [3, nil, 4], [5, 6, 7], [8, 9, 10] ]
-      expect(service.values).to eq [ [5, 6, 7], [8, 9, 10] ]
-    end
-  end
-
-  describe "#wells_row_count" do
-    it "returns the number of rows of wells on the plate", :aggregate_failures do
-      expect(service.wells_row_count).to eq service.parsed_rows.size / service.times.size
-    end
-  end
-
-  describe "#plate_readings_matrix" do
-    it "returns the plate reading values organised into wells" do
-      expected_matrix = [
+  describe "#wells_matrix" do
+    it "returns the values from the plate readings organised into wells" do
+      expect(service.wells_matrix).to eq Matrix[
         [ [2254.922, 2343.580], [1842.306, 1903.978] ],
         [ [2195.008, 2248.472], [1803.211, 1858.705] ]
       ]
-      expect(service.plate_readings_matrix).to eq expected_matrix
     end
   end
 
