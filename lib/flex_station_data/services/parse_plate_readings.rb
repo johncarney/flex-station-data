@@ -4,8 +4,6 @@ require "matrix"
 require "flex_station_data/wells"
 require "flex_station_data/concerns/service"
 
-require "pry"
-
 module FlexStationData
   class ParsePlateReadings
     include Concerns::Service
