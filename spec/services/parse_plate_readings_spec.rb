@@ -2,37 +2,30 @@ require "csv"
 require "flex_station_data/services/parse_plate_readings"
 
 RSpec.describe FlexStationData::ParsePlateReadings do
-  let(:plate_readings_block_csv) do
-    <<~CSV
-      ,Temperature(¡C),1,2,,,,,,,,,,,,,,,,,,,
-      0:00:00,23.4,2254.922,1842.306,,,,,,,,,,,,,,,,,,,,,,
-      ,,2195.008,1803.211,,,,,,,,,,,,,,,,,,,,,,
-      ,,,,,,,,,,,,,,,,,,,,,,,,,
-      0:02:00,23.5,2343.58,1903.978,,,,,,,,,,,,,,,,,,,,,,
-      ,,2248.472,1858.705,,,,,,,,,,,,,,,,,,,,,,
-      ,,,,,,,,,,,,,,,,,,,,,,,,,
-    CSV
-  end
+  let(:plate_file) { Pathname(".").join("spec", "fixtures", "plate-data-1.csv") }
+  let(:plate_data) { CSV.read(plate_file, headers: false) }
 
-  let(:plate_readings_block) do
-    CSV.parse(plate_readings_block_csv, headers: false)
-  end
+  let(:service) { described_class.new(plate_data) }
 
-  let(:service) { described_class.new(plate_readings_block) }
+  describe "#readings_block" do
+    it "returns the section of the plate data that contains the readings with empty rows removed" do
+      expect(service.readings_block).to eq plate_data[2...7].select { |row| row.any?(&:present?) }
+    end
+  end
 
   describe "#headers" do
     it "returns the header row of the data block with trailing blanks stripped" do
-      expect(service.headers).to eq plate_readings_block.first[0..3]
+      expect(service.headers).to eq plate_data[1][0...8]
     end
   end
 
   describe "#matrix" do
     it "returns the parsed value rows of the data block as a matrix" do
       expect(service.matrix).to eq Matrix[
-        [ 0.0, 23.4, 2254.922, 1842.306 ],
-        [ nil, nil,  2195.008, 1803.211 ],
-        [ 2.0, 23.5, 2343.580, 1903.978 ],
-        [ nil, nil,  2248.472, 1858.705 ]
+        [ 0.0, 23.4, 2254.922, 1842.306, 1872.553, 1689.320, nil, nil ],
+        [ nil, nil,  2195.008, 1803.211, 1736.510, 1698.474, nil, nil ],
+        [ 2.0, 23.5, 2343.580, 1903.978, 1933.736, 1769.879, nil, nil ],
+        [ nil, nil,  2248.472, 1858.705, 1785.939, 1774.720, nil, nil ]
       ]
     end
   end
@@ -52,16 +45,18 @@ RSpec.describe FlexStationData::ParsePlateReadings do
   describe "#wells_matrix" do
     it "returns the values from the plate readings organised into wells" do
       expect(service.wells_matrix).to eq Matrix[
-        [ [2254.922, 2343.580], [1842.306, 1903.978] ],
-        [ [2195.008, 2248.472], [1803.211, 1858.705] ]
+        [ [2254.922, 2343.580], [1842.306, 1903.978], [1872.553, 1933.736], [1689.320, 1769.879], [nil, nil], [nil, nil] ],
+        [ [2195.008, 2248.472], [1803.211, 1858.705], [1736.510, 1785.939], [1698.474, 1774.720], [nil, nil], [nil, nil] ]
       ]
     end
   end
 
   describe "#wells" do
+    it "returns a Wells object with the plate readings"
   end
 
   describe "#call" do
+    it "returns the times, temperature, and wells"
   end
 
   describe ".parse_time" do
