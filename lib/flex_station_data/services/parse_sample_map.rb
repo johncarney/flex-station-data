@@ -13,10 +13,19 @@ module FlexStationData
       @plate_data = plate_data
     end
 
-    def call
-      return {} if matrix.empty?
+    def sample_map_rows
+      plate_data
+        .drop_while { |row| !sample_map_header?(row) }
+        .drop(1)
+        .take_while { |row| !empty_row?(row) }
+        .map(&method(:parse_row))
+    end
 
-      labels.zip(matrix.column(1).to_a.each_slice(wells_per_sample).to_a).to_h
+    def call
+      sample_map_rows.each_with_object([]) do |(label, well), memo|
+        memo << [ label, [] ] if label.present?
+        memo.last.last << well
+      end.to_h
     end
 
     private
@@ -31,26 +40,6 @@ module FlexStationData
 
     def sample_map_header?(row)
       row[0].to_s =~ /\A\s*Sample\s*\z/i && row[1].to_s =~ /\A\s*Wells\s*\z/i
-    end
-
-    def sample_map_rows
-      plate_data
-        .drop_while { |row| !sample_map_header?(row) }
-        .drop(1)
-        .take_while { |row| !empty_row?(row) }
-        .map(&method(:parse_row))
-    end
-
-    def matrix
-      @matrix ||= Matrix[*sample_map_rows]
-    end
-
-    def labels
-      @labels ||= matrix.column(0).to_a.compact
-    end
-
-    def wells_per_sample
-      matrix.row_count / labels.size
     end
   end
 end
