@@ -1,7 +1,11 @@
 require "csv"
 require "flex_station_data/services/parse_plate_readings"
 
+require "support/wells_matchers"
+
 RSpec.describe FlexStationData::ParsePlateReadings do
+  include WellsMatchers
+
   let(:plate_file) { Pathname(".").join("spec", "fixtures", "plate-data-1.csv") }
   let(:plate_data) { CSV.read(plate_file, headers: false) }
 
@@ -43,8 +47,10 @@ RSpec.describe FlexStationData::ParsePlateReadings do
   end
 
   describe "#wells_matrix" do
+    subject(:wells_matrix) { service.wells_matrix }
+
     it "returns the values from the plate readings organised into wells" do
-      expect(service.wells_matrix).to eq Matrix[
+      expect(wells_matrix).to eq Matrix[
         [ [2254.922, 2343.580], [1842.306, 1903.978], [1872.553, 1933.736], [1689.320, 1769.879], [nil, nil], [nil, nil] ],
         [ [2195.008, 2248.472], [1803.211, 1858.705], [1736.510, 1785.939], [1698.474, 1774.720], [nil, nil], [nil, nil] ]
       ]
@@ -52,11 +58,25 @@ RSpec.describe FlexStationData::ParsePlateReadings do
   end
 
   describe "#wells" do
-    it "returns a Wells object with the plate readings"
+    subject(:wells) { service.wells }
+
+    it "returns a Wells object with the plate readings" do
+      expect(wells).to be_a_wells_object.with_matrix Matrix[
+        [ [2254.922, 2343.580], [1842.306, 1903.978], [1872.553, 1933.736], [1689.320, 1769.879], [nil, nil], [nil, nil] ],
+        [ [2195.008, 2248.472], [1803.211, 1858.705], [1736.510, 1785.939], [1698.474, 1774.720], [nil, nil], [nil, nil] ]
+      ]
+    end
   end
 
   describe "#call" do
-    it "returns the times, temperature, and wells"
+    subject(:times_temperatures_and_wells) { service.call }
+
+    it "returns the times, temperatures, and wells" do
+      wells = instance_double(FlexStationData::Wells, :wells)
+      allow(service).to receive(:wells).and_return wells
+
+      expect(times_temperatures_and_wells).to eq [ [0.0, 2.0], [23.4, 23.5], wells ]
+    end
   end
 
   describe ".parse_time" do
