@@ -23,17 +23,6 @@ RSpec.describe FlexStationData::ParsePlateReadings do
     end
   end
 
-  describe "#matrix" do
-    it "returns the parsed value rows of the data block as a matrix" do
-      expect(service.matrix).to eq Matrix[
-        [ 0.0, 23.4, 2254.922, 1842.306, 1872.553, 1689.320, nil, nil ],
-        [ nil, nil,  2195.008, 1803.211, 1736.510, 1698.474, nil, nil ],
-        [ 2.0, 23.5, 2343.580, 1903.978, 1933.736, 1769.879, nil, nil ],
-        [ nil, nil,  2248.472, 1858.705, 1785.939, 1774.720, nil, nil ]
-      ]
-    end
-  end
-
   describe "#times" do
     it "returns the time values from the plate readings" do
       expect(service.times).to eq [ 0.0, 2.0 ]
@@ -43,17 +32,6 @@ RSpec.describe FlexStationData::ParsePlateReadings do
   describe "#temperatures" do
     it "returns the temperature values from the plate readings" do
       expect(service.temperatures).to eq [ 23.4, 23.5 ]
-    end
-  end
-
-  describe "#wells_matrix" do
-    subject(:wells_matrix) { service.wells_matrix }
-
-    it "returns the values from the plate readings organised into wells" do
-      expect(wells_matrix).to eq Matrix[
-        [ [2254.922, 2343.580], [1842.306, 1903.978], [1872.553, 1933.736], [1689.320, 1769.879], [nil, nil], [nil, nil] ],
-        [ [2195.008, 2248.472], [1803.211, 1858.705], [1736.510, 1785.939], [1698.474, 1774.720], [nil, nil], [nil, nil] ]
-      ]
     end
   end
 

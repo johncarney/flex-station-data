@@ -26,23 +26,12 @@ module FlexStationData
       @headers ||= plate_data.detect(&method(:header_row?)).reverse.drop_while(&:blank?).reverse
     end
 
-    def matrix
-      @matrix ||= Matrix[
-        *readings_block.map { |row| parse_row(row[0...headers.size]) }
-      ]
-    end
-
     def times
       @times ||= matrix.column(0).to_a.compact
     end
 
     def temperatures
       @temperatures ||= matrix.column(1).to_a.compact
-    end
-
-    def wells_matrix
-      well_row_count = matrix.row_count / times.size
-      Matrix[*well_values.column_vectors.map { |col| col.to_a.each_slice(well_row_count).to_a.transpose }.transpose ]
     end
 
     def wells
@@ -87,6 +76,17 @@ module FlexStationData
 
     def well_values
       matrix.minor(0..-1, 2..-1)
+    end
+
+    def matrix
+      @matrix ||= Matrix[
+        *readings_block.map { |row| parse_row(row[0...headers.size]) }
+      ]
+    end
+
+    def wells_matrix
+      well_row_count = matrix.row_count / times.size
+      Matrix[*well_values.column_vectors.map { |col| col.to_a.each_slice(well_row_count).to_a.transpose }.transpose ]
     end
 
     attr_reader :plate_data
