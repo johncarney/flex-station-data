@@ -1,9 +1,7 @@
 #!/usr/bin/env ruby
 
 require "flex_station_data/services/load_plates"
-require "flex_station_data/presenters/plates_csv"
-require "flex_station_data/presenters/linear_regression/plates_hash"
-require "flex_station_data/presenters/linear_regression/verbose_sample_csv"
+require "flex_station_data/presenters/plates_hash"
 
 module FlexStationData
   class LinearRegressionApp
@@ -31,10 +29,6 @@ module FlexStationData
       Float(option(:threshold)) rescue nil
     end
 
-    def verbose?
-      option(:verbose)
-    end
-
     def min_r_squared
       Float(option("min-r-squared")) rescue 0.75
     end
@@ -49,21 +43,9 @@ module FlexStationData
       end
     end
 
-    def verbose_csv
+    def plate_hashes
       plates.flat_map do |file, file_plates|
-        Presenters::PlatesCsv.present(
-          file,
-          file_plates,
-          sample_presenter: Presenters::LinearRegression::VerboseSampleCsv,
-          threshold:        threshold,
-          min_r_squared:    min_r_squared
-        )
-      end
-    end
-
-    def summary_hashes
-      plates.flat_map do |file, file_plates|
-        Presenters::LinearRegression::PlatesHash.present(
+        Presenters::PlatesHash.present(
           file,
           file_plates,
           threshold:     threshold,
@@ -78,9 +60,9 @@ module FlexStationData
       end
     end
 
-    def summary_hash
-      @summary_hash ||= begin
-        result = summary_hashes.each_with_object({}) do |hash, memo|
+    def hash
+      @hash ||= begin
+        result = plate_hashes.each_with_object({}) do |hash, memo|
           hash.each do |header, value|
             memo[header] ||= []
             memo[header] << value
@@ -92,12 +74,8 @@ module FlexStationData
       end
     end
 
-    def summary_csv
-      [ summary_hash.keys, *summary_hash.values.transpose ]
-    end
-
     def csv
-      verbose? ? verbose_csv : summary_csv
+      [ hash.keys, *hash.values.transpose ]
     end
 
     def call

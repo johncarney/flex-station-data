@@ -23,7 +23,7 @@ module FlexStationData
       attr_reader :description
 
       def initialize(description)
-        @description ||= description
+        @description = description
       end
 
       def good?
