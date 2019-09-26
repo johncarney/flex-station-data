@@ -2,8 +2,6 @@
 
 Tools for reading and analyzing data from the FlexStation microplate reader.
 
-Currently this is somewhere between alpha and beta.
-
 ## Installation
 
 Add this line to your application's Gemfile:
