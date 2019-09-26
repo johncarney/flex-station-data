@@ -4,16 +4,15 @@ module FlexStationData
   class SampleQuality
     include Concerns::Service
 
-    attr_reader :sample, :value_quality_control, :options
+    attr_reader :sample, :options
 
-    def initialize(sample, value_quality_control: ValueQuality, **options)
+    def initialize(sample, **options)
       @sample = sample
-      @value_quality_control = value_quality_control
       @options = options
     end
 
     def value_quality(value)
-      value_quality_control.call(value, **options)
+      ValueQuality.call(value, **options)
     end
 
     def call

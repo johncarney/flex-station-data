@@ -6,8 +6,9 @@ RSpec.describe FlexStationData::ValueQuality do
   include ValueQualityMatchers
 
   describe "#call" do
-    subject(:quality) { described_class.new(value, threshold: threshold).call }
+    subject(:quality) { service.call }
 
+    let(:service)   { described_class.new(value, threshold: threshold) }
     let(:threshold) { nil }
 
     context "with a nil value" do
