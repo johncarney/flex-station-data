@@ -1,3 +1,7 @@
+# 1.0.0
+
+* Removed option for sample data report and verbose linear regression report.
+
 # 0.3.2
 
 * Internal refactoring
