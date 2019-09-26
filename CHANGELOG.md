@@ -1,3 +1,7 @@
+# 1.0.1
+
+* Miscellaneous refactoring.
+
 # 1.0.0
 
 * Removed option for sample data report and verbose linear regression report.

@@ -1,11 +1,12 @@
 #!/usr/bin/env ruby
 
+require "flex_station_data/concerns/callable"
 require "flex_station_data/services/load_plates"
 require "flex_station_data/presenters/plates_hash"
 
 module FlexStationData
   class LinearRegressionApp
-    include Concerns::Service
+    include Concerns::Callable[:run]
 
     OPTION_RE = /\A--(\w+(?:-\w+)*)(?:=(.*))?\z/.freeze
 
@@ -78,7 +79,7 @@ module FlexStationData
       [ hash.keys, *hash.values.transpose ]
     end
 
-    def call
+    def run
       CSV do |out|
         csv.each do |row|
           out << row
@@ -88,4 +89,4 @@ module FlexStationData
   end
 end
 
-FlexStationData::LinearRegressionApp.call(*ARGV)
+FlexStationData::LinearRegressionApp.run(*ARGV)
