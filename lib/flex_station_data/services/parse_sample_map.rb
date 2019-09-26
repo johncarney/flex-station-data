@@ -7,14 +7,25 @@ module FlexStationData
   class ParseSampleMap
     include Concerns::Service
 
-    attr_reader :sample_map_block
+    attr_reader :plate_data
 
-    def initialize(sample_map_block)
-      @sample_map_block = sample_map_block
+    def initialize(plate_data)
+      @plate_data = plate_data
+    end
+
+    def sample_map_rows
+      plate_data
+        .drop_while { |row| !sample_map_header?(row) }
+        .drop(1)
+        .take_while { |row| !empty_row?(row) }
+        .map(&method(:parse_row))
     end
 
     def call
-      labels.zip(matrix.column(1).to_a.each_slice(wells_per_sample).to_a).to_h
+      sample_map_rows.each_with_object([]) do |(label, well), memo|
+        memo << [ label, [] ] if label.present?
+        memo.last.last << well
+      end.to_h
     end
 
     private
@@ -28,23 +39,7 @@ module FlexStationData
     end
 
     def sample_map_header?(row)
-      row[0] == "Sample"
-    end
-
-    def sample_map_rows
-      sample_map_block.map(&method(:parse_row)).split(&method(:sample_map_header?)).drop(1).first.split(&method(:empty_row?)).first
-    end
-
-    def matrix
-      @matrix ||= Matrix[*sample_map_rows]
-    end
-
-    def labels
-      @labels ||= matrix.column(0).to_a.compact
-    end
-
-    def wells_per_sample
-      matrix.row_count / labels.size
+      row[0].to_s =~ /\A\s*Sample\s*\z/i && row[1].to_s =~ /\A\s*Wells\s*\z/i
     end
   end
 end

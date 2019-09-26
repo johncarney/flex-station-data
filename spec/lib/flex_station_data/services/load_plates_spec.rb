@@ -21,6 +21,7 @@ RSpec.describe FlexStationData::LoadPlates do
         Plate:,CatB S1-8 & S33-41 t=24,1.3,PlateFormat,Kinetic,Fluorescence,FALSE,Raw,FALSE,16,1800,120,,,,1,460,1,9,96,360,Automatic,455,,,6,Medium,,,1,8,,0
         Data for Plate #1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
         ~End ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+        Other stuff,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
         Plate:,CatB S42-73 t = 48,1.3,PlateFormat,Kinetic,Fluorescence,FALSE,Raw,FALSE,16,1800,120,,,,1,460,1,12,96,360,Automatic,455,,,6,Medium,,,1,8,,0
         Data for Plate #2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
         ~End ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
@@ -32,8 +33,8 @@ RSpec.describe FlexStationData::LoadPlates do
       allow(service).to receive(:data).and_return data
     end
 
-    it "splits the data into separate block for each plate" do
-      expected_blocks = [ data[2...4], data[5...7] ]
+    it "splits the data into a separate block for each plate" do
+      expected_blocks = [ data[1...5], data[5...8] ]
       expect(service.data_blocks).to eq expected_blocks
     end
   end
