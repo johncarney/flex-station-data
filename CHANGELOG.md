@@ -1,3 +1,9 @@
+# 1.0.2
+
+* Update to Ruby 2.7.1
+* Introduce Rubocop
+* Added "Ruby" GitHub workflow
+
 # 1.0.1
 
 * Miscellaneous refactoring.
