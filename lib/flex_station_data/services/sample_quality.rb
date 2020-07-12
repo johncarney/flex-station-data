@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "flex_station_data/services/value_quality"
 
 module FlexStationData

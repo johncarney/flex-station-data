@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rspec/expectations"
 
 require "flex_station_data/wells"

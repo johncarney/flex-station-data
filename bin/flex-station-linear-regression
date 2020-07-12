@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require "flex_station_data/concerns/callable"
 require "flex_station_data/services/load_plates"
@@ -27,11 +28,15 @@ module FlexStationData
     end
 
     def threshold
-      Float(option(:threshold)) rescue nil
+      Float(option(:threshold))
+    rescue ArgumentError, TypeError
+      nil
     end
 
     def min_r_squared
-      Float(option("min-r-squared")) rescue 0.75
+      Float(option("min-r-squared"))
+    rescue ArgumentError, TypeError
+      0.75
     end
 
     def files
@@ -57,7 +62,7 @@ module FlexStationData
 
     def clean_values(values)
       values.each_with_object([]) do |value, memo|
-        memo << ((value != memo.compact.last) ? value : nil)
+        memo << (value != memo.compact.last ? value : nil)
       end
     end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "flex_station_data/services/value_quality"
 
 require "support/value_quality_matchers"
@@ -36,7 +38,7 @@ RSpec.describe FlexStationData::ValueQuality do
     end
 
     context "when a threshold is specified" do
-      let(:threshold){ 100.0 }
+      let(:threshold) { 100.0 }
 
       context "with a value below the threshold" do
         let(:value) { 99.9 }

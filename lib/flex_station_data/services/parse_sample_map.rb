@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "matrix"
 require "active_support/core_ext"
 

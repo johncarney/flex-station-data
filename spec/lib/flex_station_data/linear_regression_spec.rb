@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "flex_station_data/linear_regression"
 
 RSpec.describe FlexStationData::LinearRegression do

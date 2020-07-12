@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "flex_station_data/services/load_plates"
 require "flex_station_data/services/parse_plate"
 

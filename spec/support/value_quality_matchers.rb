@@ -1,12 +1,12 @@
+# frozen_string_literal: true
+
 require "rspec/expectations"
 
 module ValueQualityMatchers
   extend RSpec::Matchers::DSL
 
   matcher :be_good do
-    match do |quality|
-      quality.good?
-    end
+    match(&:good?)
   end
 
   matcher :be_bad do |description = nil|

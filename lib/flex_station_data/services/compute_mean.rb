@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "active_support/core_ext"
 
 require "flex_station_data/concerns/service"
