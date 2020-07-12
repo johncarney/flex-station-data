@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "flex_station_data/presenters/sample_regression_hash"
 
 RSpec.describe FlexStationData::Presenters::SampleRegressionHash do

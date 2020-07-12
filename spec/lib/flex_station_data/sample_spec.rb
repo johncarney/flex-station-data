@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "flex_station_data/wells"
 require "flex_station_data/plate"
 require "flex_station_data/sample"

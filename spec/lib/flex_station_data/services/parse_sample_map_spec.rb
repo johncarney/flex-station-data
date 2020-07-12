@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "csv"
 require "flex_station_data/services/parse_sample_map"
 
@@ -46,7 +48,6 @@ RSpec.describe FlexStationData::ParseSampleMap do
         expect(sample_map).to map_sample("3").to "Z1", "Z2"
       end
     end
-
 
     context "given an irregular sample map" do
       let(:sample_map_rows) do

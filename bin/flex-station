@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require "pathname"
 require "flex_station_data/concerns/callable"
@@ -28,7 +29,7 @@ class App
     when "help", "--help"
       puts "USAGE: flex-station <command>"
     else
-      $stderr.puts "Unrecognised command: #{command}"
+      warn "Unrecognised command: #{command}"
       exit(1)
     end
   end

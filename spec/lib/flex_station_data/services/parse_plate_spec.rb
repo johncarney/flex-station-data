@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "csv"
 
 require "flex_station_data/services/parse_plate"

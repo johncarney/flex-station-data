@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module FlexStationData
   class DefaultSampleMap
     attr_reader :rows, :columns, :wells_per_sample
@@ -20,7 +22,7 @@ module FlexStationData
       row_label = ("A".ord + row).chr
       base_column = (column * wells_per_sample) + 1
       (0...wells_per_sample).map do |column_offset|
-        [ row_label, base_column +column_offset ].join("")
+        [ row_label, base_column + column_offset ].join("")
       end
     end
 

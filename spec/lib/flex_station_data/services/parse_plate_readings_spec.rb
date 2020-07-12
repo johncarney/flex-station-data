@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "csv"
 require "flex_station_data/services/parse_plate_readings"
 
@@ -13,7 +15,8 @@ RSpec.describe FlexStationData::ParsePlateReadings do
 
   describe "#readings_block" do
     it "returns the section of the plate data that contains the readings with empty rows removed" do
-      expect(service.readings_block).to eq plate_data[2...7].select { |row| row.any?(&:present?) }
+      expected_block = plate_data[2...7].select { |row| row.any?(&:present?) }
+      expect(service.readings_block).to eq expected_block
     end
   end
 
@@ -59,7 +62,7 @@ RSpec.describe FlexStationData::ParsePlateReadings do
 
   describe ".parse_time" do
     it "parses a string in the form H:M:S into decimal minutes" do
-      expect(described_class.parse_time("2:10:3")).to eq (2 * 60 + 10 + 3 / 60.0)
+      expect(described_class.parse_time("2:10:3")).to eq(2 * 60 + 10 + 3 / 60.0)
     end
 
     context "given a blank value" do

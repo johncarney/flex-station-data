@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "flex_station_data/services/compute_mean"
 
 RSpec.describe FlexStationData::ComputeMean do

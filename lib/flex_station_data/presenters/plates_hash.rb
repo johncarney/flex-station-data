@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "flex_station_data/presenters/plate_hash"
 
 module FlexStationData

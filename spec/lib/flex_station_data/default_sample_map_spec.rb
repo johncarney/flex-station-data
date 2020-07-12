@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "flex_station_data/default_sample_map"
 
 require "support/sample_map_matchers"

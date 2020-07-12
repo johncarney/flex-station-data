@@ -1,33 +1,33 @@
+# frozen_string_literal: true
+
 module FlexStationData
   module Concerns
     module Callable
       class << self
-        def [](verb)
-          @@__callable_modules[verb] ||= Module.new.tap { |mod| __make_callable(mod, verb) }
+        def included(base)
+          base.include with(:call)
         end
 
-        private
+        def with(verb)
+          callable_modules[verb.to_sym] ||= Module.new do
+            define_singleton_method(:included) do |base|
+              base.define_singleton_method(verb) do |*args|
+                new(*args).public_send(verb)
+              end
 
-        def __make_callable(mod, verb)
-          class_methods = Module.new do
-            define_method verb do |*args, &block|
-              new(*args).send(verb, &block)
-            end
-
-            define_method :to_proc do
-              Proc.new(&method(verb))
+              base.define_singleton_method(:to_proc) do
+                method(verb).to_proc
+              end
             end
           end
+        end
 
-          mod.singleton_class.define_method :included do |base|
-            base.extend class_methods
-          end
+        alias [] with
+
+        def callable_modules
+          @callable_modules ||= {}
         end
       end
-
-      __make_callable(self, :call)
-
-      @@__callable_modules = { call: self }
     end
   end
 end

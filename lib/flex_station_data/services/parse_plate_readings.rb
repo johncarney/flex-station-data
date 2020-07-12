@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "active_support/core_ext"
 require "matrix"
 
@@ -51,7 +53,9 @@ module FlexStationData
       end
 
       def parse_value(v)
-        return Float(v) rescue v.presence
+        Float(v)
+      rescue ArgumentError, TypeError
+        v.presence
       end
 
       def parse_row(row)
@@ -86,7 +90,7 @@ module FlexStationData
 
     def wells_matrix
       well_row_count = matrix.row_count / times.size
-      Matrix[*well_values.column_vectors.map { |col| col.to_a.each_slice(well_row_count).to_a.transpose }.transpose ]
+      Matrix[*well_values.column_vectors.map { |col| col.to_a.each_slice(well_row_count).to_a.transpose }.transpose]
     end
 
     attr_reader :plate_data

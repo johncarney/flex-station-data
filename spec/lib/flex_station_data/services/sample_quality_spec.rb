@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "flex_station_data/services/sample_quality"
 require "flex_station_data/services/value_quality"
 
@@ -38,7 +40,7 @@ RSpec.describe FlexStationData::SampleQuality do
 
     it "checks the quality of each value", :aggregate_failures do
       service.call
-      value_qualities.each do |value, quality|
+      value_qualities.each do |value, _quality|
         expect(FlexStationData::ValueQuality).to have_received(:call).with(value, **options).once
       end
     end

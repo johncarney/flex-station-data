@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "flex_station_data/presenters/sample_hash"
 
 RSpec.describe FlexStationData::Presenters::SampleHash do
@@ -10,7 +12,7 @@ RSpec.describe FlexStationData::Presenters::SampleHash do
     subject(:hash) { presenter.present }
 
     let(:mean)    { [ 1000.0, 2000.0 ] }
-    let(:sample)  { instance_double(FlexStationData::Sample, :sample, label: "the sample", wells: %w(X1 X2), mean: mean) }
+    let(:sample)  { instance_double(FlexStationData::Sample, :sample, label: "the sample", wells: %w[X1 X2], mean: mean) }
     let(:quality) { FlexStationData::ValueQuality::Good.instance }
 
     before do
